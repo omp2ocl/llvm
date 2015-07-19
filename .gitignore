@@ -20,6 +20,8 @@
 .sw?
 #OS X specific files.
 .DS_store
+# Object files
+*.o
 
 #==============================================================================#
 # Explicit files to ignore (only matches one).
@@ -49,3 +51,9 @@ tools/lld
 tools/polly
 # Sphinx build tree, if building in-source dir.
 docs/_build
+docs/*
+# Build directory tree
+build/*
+cmake/*
+# Installation directory
+install/*

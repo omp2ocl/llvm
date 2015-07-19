@@ -563,6 +563,9 @@ bool FunctionAttrs::AddArgumentAttrs(const CallGraphSCC &SCC) {
       continue;
     }
 
+    CallingConv::ID CC = F->getCallingConv();
+    bool isSpir = (CC == CallingConv::SPIR_KERNEL) || (CC ==  CallingConv::SPIR_FUNC);
+      
     for (Function::arg_iterator A = F->arg_begin(), E = F->arg_end();
          A != E; ++A) {
       if (!A->getType()->isPointerTy()) continue;
@@ -591,7 +594,7 @@ bool FunctionAttrs::AddArgumentAttrs(const CallGraphSCC &SCC) {
         }
         // Otherwise, it's captured. Don't bother doing SCC analysis on it.
       }
-      if (!HasNonLocalUses && !A->onlyReadsMemory()) {
+      if (!HasNonLocalUses && !A->onlyReadsMemory() && !isSpir) {
         // Can we determine that it's readonly/readnone without doing an SCC?
         // Note that we don't allow any calls at all here, or else our result
         // will be dependent on the iteration order through the functions in the
