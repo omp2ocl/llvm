@@ -22,6 +22,10 @@
 .DS_store
 # Object files
 *.o
+.dir
+*.d
+*.inc
+*.exports
 
 #==============================================================================#
 # Explicit files to ignore (only matches one).
@@ -57,3 +61,5 @@ build/*
 cmake/*
 # Installation directory
 install/*
+# Spir Tools
+tools/SPIR-Tools
