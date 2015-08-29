@@ -10,6 +10,7 @@ set(HEADER_FILES
   BitstreamWriter.h
   LLVMBitCodes.h
   SpirBitcodeWriter.h
+  ${LLVM_MAIN_SRC_DIR}/tools/spir-encoder/headers/opencl_spir.h
   ${LLVM_MAIN_SRC_DIR}/lib/Bitcode/Writer/ValueEnumerator.h
   )
 
@@ -24,6 +25,7 @@ add_llvm_library(${TARGET_NAME}
 
 set(HEADER_INSTALL_FILES
   SpirBitcodeWriter.h
+  ${LLVM_MAIN_SRC_DIR}/tools/spir-encoder/headers/opencl_spir.h
   )
 
 install(FILES ${HEADER_INSTALL_FILES} DESTINATION include/llvm/SpirTools)

@@ -1,4 +1,3 @@
-//
 //                     SPIR Tools
 //
 // This file is distributed under the University of Illinois Open Source
@@ -11,6 +10,8 @@
 #if !defined(__SPIR32__) && !defined(__SPIR64__)
 #error "This header file should be used with SPIR target only."
 #endif
+
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 // Optimizations
 
