@@ -8,7 +8,7 @@
 //===---------------------------------------------------------------------===//
 
 
-#include "encoder/SpirBitcodeWriter.h"
+#include "../encoder/SpirBitcodeWriter.h"
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/LLVMContext.h>

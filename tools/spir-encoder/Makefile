@@ -11,6 +11,6 @@ LEVEL := ../..
 
 include $(LEVEL)/Makefile.config
 
-PARALLEL_DIRS = driver encoder
+PARALLEL_DIRS = encoder driver
 
 include $(LEVEL)/Makefile.common
