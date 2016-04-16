@@ -83,3 +83,18 @@ if( NOT LLVM_INCLUDE_TOOLS STREQUAL "bootstrap-only" )
 endif()
 
 set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} PARENT_SCOPE)
+
+include(ExternalProject)
+ExternalProject_Add(ppcg
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ppcg
+  CONFIGURE_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/ppcg/configure --prefix=${CMAKE_INSTALL_PREFIX} --with-clang-prefix=${CMAKE_INSTALL_PREFIX} "CFLAGS=-g -O2 -w" "CXXFLAGS=-g -O2 -w -fno-rtti"
+  PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/ppcg
+  BUILD_COMMAND make
+  BUILD_IN_SOURCE 1
+  INSTALL_COMMAND make install
+  STEP_TARGETS st1
+)
+ExternalProject_Add_Step(ppcg  st1
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ppcg
+  COMMAND cp clang-pcg ${CMAKE_INSTALL_PREFIX}/bin
+)
