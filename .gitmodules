@@ -1,0 +1,3 @@
+[submodule "tools/ppcg"]
+	path = tools/ppcg
+	url = /Users/marcio/Dropbox/ppcg/ppcg.git
