@@ -1,14 +1,14 @@
-#==============================================================================#
+#===========================================================================#
 # This file specifies intentionally untracked files that git should ignore.
 # See: http://www.kernel.org/pub/software/scm/git/docs/gitignore.html
 #
-# This file is intentionally different from the output of `git svn show-ignore`,
-# as most of those are useless.
-#==============================================================================#
+# This file is intentionally different from the output of
+# `git svn show-ignore`, as most of those are useless.
+#===========================================================================#
 
-#==============================================================================#
+#===========================================================================#
 # File extensions to be ignored anywhere in the tree.
-#==============================================================================#
+#===========================================================================#
 # Temp files created by most text editors.
 *~
 # Merge files created by git.
@@ -27,9 +27,9 @@
 *.inc
 *.exports
 
-#==============================================================================#
+#===========================================================================#
 # Explicit files to ignore (only matches one).
-#==============================================================================#
+#===========================================================================#
 .gitusers
 autom4te.cache
 cscope.files
@@ -38,9 +38,9 @@ autoconf/aclocal.m4
 autoconf/autom4te.cache
 compile_commands.json
 
-#==============================================================================#
+#===========================================================================#
 # Directories to ignore (do not add trailing '/'s, they skip symlinks).
-#==============================================================================#
+#===========================================================================#
 # External projects that are tracked independently.
 projects/*
 !projects/CMakeLists.txt
@@ -51,8 +51,8 @@ tools/clang
 tools/lldb
 # lld, which is tracked independently.
 tools/lld
-# Polly, which is tracked independently.
-tools/polly
+# ppcg, which is tracked independently.
+tools/ppcg
 # Sphinx build tree, if building in-source dir.
 docs/_build
 docs/*
