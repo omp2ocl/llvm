@@ -1,3 +1,6 @@
 [submodule "tools/ppcg"]
 	path = tools/ppcg
 	url = https://github.com/iviarcio/ppcg.git
+[submodule "tools/clang"]
+	path = tools/clang
+	url = https://github.com/iviarcio/clang-mptogpu.git
