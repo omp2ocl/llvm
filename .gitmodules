@@ -4,3 +4,6 @@
 [submodule "tools/clang"]
 	path = tools/clang
 	url = https://github.com/iviarcio/clang-mptogpu.git
+[submodule "tools/vectorize"]
+	path = tools/vectorize
+	url = https://github.com/iviarcio/vectorize.git
