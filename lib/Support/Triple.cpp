@@ -50,6 +50,7 @@ const char *Triple::getArchTypeName(ArchType Kind) {
   case amdil:       return "amdil";
   case spir:        return "spir";
   case spir64:      return "spir64";
+  case spirv:       return "spirv";
   case opencl32:    return "opencl32";
   case opencl:      return "opencl";
   case kalimba:     return "kalimba";
@@ -103,6 +104,7 @@ const char *Triple::getArchTypePrefix(ArchType Kind) {
   case amdil:       return "amdil";
   case spir:        return "spir";
   case spir64:      return "spir";
+  case spirv:       return "spirv";
   case opencl32:    return "opencl";
   case opencl:      return "opencl";
   case kalimba:     return "kalimba";
@@ -215,6 +217,7 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
     .Case("amdil", amdil)
     .Case("spir", spir)
     .Case("spir64", spir64)
+    .Case("spirv", spirv)
     .Case("opencl32", opencl32)
     .Case("opencl", opencl)
     .Case("kalimba", kalimba)
@@ -247,6 +250,7 @@ const char *Triple::getArchNameForAssembler() {
     .Case("amdil", "amdil")
     .Case("spir", "spir")
     .Case("spir64", "spir64")
+    .Case("spirv", "spirv")
     .Case("opencl32", "opencl32")
     .Case("opencl", "opencl")
     .Default(nullptr);
@@ -297,6 +301,7 @@ static Triple::ArchType parseArch(StringRef ArchName) {
     .Case("amdil", Triple::amdil)
     .Case("spir", Triple::spir)
     .Case("spir64", Triple::spir64)
+    .Case("spirv", Triple::spirv)
     .Case("opencl32", Triple::opencl32)
     .Case("opencl", Triple::opencl)
     .Case("kalimba", Triple::kalimba)
@@ -863,6 +868,7 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::systemz:
   case llvm::Triple::x86_64:
   case llvm::Triple::spir64:
+  case llvm::Triple::spirv:
   case llvm::Triple::opencl:
     return 64;
   }
@@ -951,6 +957,7 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::aarch64:
   case Triple::aarch64_be:
   case Triple::spir64:
+  case Triple::spirv:
   case Triple::opencl:
   case Triple::mips64:
   case Triple::mips64el:

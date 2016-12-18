@@ -77,6 +77,7 @@ public:
     amdil,      // amdil: amd IL
     spir,       // SPIR: standard portable IR for OpenCL 32-bit version
     spir64,     // SPIR: standard portable IR for OpenCL 64-bit version
+    spirv,      // SPIR-V
     opencl32,   // OpenCL 32-bit version,
     opencl,     // OpenCL 64-bit version
     kalimba     // Kalimba: generic kalimba
