@@ -55,6 +55,8 @@ docs/*
 # Build directory tree
 build/*
 cmake/*
+cmake-build-debug/*
+.idea/*
 # Installation directory
 install/*
 # Spir Tools
