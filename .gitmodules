@@ -7,3 +7,6 @@
 [submodule "tools/vectorize"]
 	path = tools/vectorize
 	url = https://github.com/iviarcio/vectorize.git
+[submodule "tools/scan"]
+	path = tools/scan
+	url = https://github.com/iviarcio/scan.git
