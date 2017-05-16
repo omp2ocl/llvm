@@ -1,12 +1,12 @@
 [submodule "tools/ppcg"]
 	path = tools/ppcg
-	url = https://github.com/iviarcio/ppcg.git
+	url = https://github.com/omp2ocl/ppcg.git
 [submodule "tools/clang"]
 	path = tools/clang
-	url = https://github.com/iviarcio/clang-mptogpu.git
+	url = https://github.com/omp2ocl/clang.git
 [submodule "tools/vectorize"]
 	path = tools/vectorize
-	url = https://github.com/iviarcio/vectorize.git
+	url = https://github.com/omp2ocl/vectorize.git
 [submodule "tools/scan"]
 	path = tools/scan
-	url = https://github.com/iviarcio/scan.git
+	url = https://github.com/omp2ocl/scan.git
