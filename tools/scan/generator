@@ -2,10 +2,9 @@
 # =================================================================
 # generator -- OpenCL kernel Scan generator
 #
-# This is the main program for the kernel vectorization compiler,
-# which just parses command-line options, figures out which source
-# files to read and write to, and invokes the different stages
-# of the compiler properly.
+# This is the kernel generate program for parallel scan,
+# which just parse command-line options, figures out which template
+# must be used and append the selected template to the kernel file.
 #
 # Copyright (C) 2017, Marcio Machado Pereira
 # License: BSD
@@ -14,85 +13,162 @@
 import os
 import sys
 
-SOURCE = """
-__kernel void scan (__global _dataType_ *input,
-                    __global _dataType_ *S,
-                    const unsigned int n) {
+Header_kernel_0 = """
+__kernel void kernel_0 (__global _dataType_ *input,
+                        __global _dataType_ *S,
+                        const unsigned int n) {
+"""
+
+Header_kernel_1 = """
+__kernel void kernel_1 (__global _dataType_ *input,
+                        const unsigned int n) {
+"""
+
+Header_kernel_2_input = """
+__kernel void kernel_2(__global _dataType_ *input,
+                       __global _dataType_ *S) {
+	int bid = get_group_id(0);
+	int gid = get_global_id(0);
+"""
+
+Header_kernel_2_output = """
+__kernel void kernel_2(__global _dataType_ *output,
+                       __global _dataType_ *input,
+                       __global _dataType_ *S) {
+	int bid = get_group_id(0);
+	int gid = get_global_id(0);
+"""
+
+Body_0 = """
 	int tid = get_local_id(0);
 	int gid = get_global_id(0);
 	int bid = get_group_id(0);
-    int offset = 1;
- 	/*Cache the computational window in shared memory*/
+	int offset = 1;
+ 	/* Cache the computational window in shared memory */
  	__local _dataType_ block [1024];
+
  	block[tid] = input[gid];
- 	/*
- 	block[2 * tid] = input[2 * tid];
-	block[2 * tid + 1] = input[2 * tid + 1];
- 	*/
  	/* build the sum in place up the tree */
 	for (int d = n >> 1; d > 0; d >>= 1) {
 		barrier (CLK_LOCAL_MEM_FENCE);
 		if (tid < d) {
 			int ai = offset * (2 * tid + 1) - 1;
 			int bi = offset * (2 * tid + 2) - 1;
+"""
 
-			block[bi] = block[bi] _operation_ block[ai];
-		}
+Body_1 = """		}
 		offset *= 2;
 	}
+"""
 
-	/* scan back down the tree */
-
-	/* clear the last element */
-	barrier (CLK_LOCAL_MEM_FENCE);
+Body_2 = """	barrier (CLK_LOCAL_MEM_FENCE);
 	S[bid] = block[n - 1];
+"""
+
+Body_3 = """
+	/* clear the last element */
 	barrier(CLK_LOCAL_MEM_FENCE | CLK_GLOBAL_MEM_FENCE);
-
 	if (tid == 0) {
-		block[n - 1] = 0;
+		block[n - 1] = _initializer;
 	}
-
 	/* traverse down the tree building the scan in the place */
 	for (int d = 1; d < n ; d *= 2) {
 		offset >>= 1;
 		barrier (CLK_LOCAL_MEM_FENCE);
-		if (tid < d)
-		{
+		if (tid < d) {
 			int ai = offset * (2 * tid + 1) - 1;
 			int bi = offset * (2 * tid + 2) - 1;
-
-			int t = block[ai];
+			_dataType_ t = block[ai];
 			block[ai] = block[bi];
-			block[bi] = block[bi] _operation_ t;
-		}
-	}
+"""
 
+Body_4 = """		}
+	}
 	barrier (CLK_LOCAL_MEM_FENCE);
 	input[gid] = block[tid];
-	/*
-	input[2 * tid] = block[2 * tid];
-	input[2 * tid + 1] = block[2 * tid + 1];
-	*/
 }
+"""
 
-__kernel void fix(__global _dataType_ *input,
-                  __global _dataType_ *S){
-	int bid = get_group_id(0);
-	int gid = get_global_id(0);
-	input[gid] = input[gid] _operation_ S[bid];
+Oper_0_basic = """			block[bi] = block[bi] _operation_ block[ai];
+"""
+
+Oper_0_user = """			block[bi] = _operation_(block[bi], block[ai]);
+"""
+
+Oper_3_basic = """			block[bi] = block[bi] _operation_ t;
+"""
+
+Oper_3_user = """			block[bi] = _operation_ (block[bi], t);
+"""
+
+Tail_input_basic = """    input[gid] = input[gid] _operation_ S[bid];
 }
+"""
 
+Tail_output_basic = """	output[gid] = input[gid] _operation_ S[bid];
+}
+"""
+
+Tail_input_user = """    input[gid] = _operation_(input[gid], S[bid]);
+}
+"""
+
+Tail_output_user = """	output[gid] = _operation_(input[gid], S[bid]);
+}
 """
 
 
 def run_scan_generator():
-    """ Runs the command-line of kernel scan generator. """
-    if len(sys.argv) != 2:
+    # Run the command-line of kernel scan generator.
+    if len(sys.argv) < 3:
         print("<<scan generator>> Input Error")
 
     filename = sys.argv[1]
+    template = sys.argv[2]
+    operName = sys.argv[3]
     with open(filename, 'a') as file:
-        file.write(SOURCE)
+        if template == "1" or template == "2":
+            # basic operation
+            file.write(Header_kernel_0 + Body_0)
+            file.write(Oper_0_basic.replace("_operation_", operName))
+            file.write(Body_1 + Body_2 + Body_3)
+            file.write(Oper_3_basic.replace("_operation_", operName))
+            file.write(Body_4 + Header_kernel_1 + Body_0)
+            file.write(Oper_0_basic.replace("_operation_", operName))
+            file.write(Body_1 + Body_3)
+            file.write(Oper_3_basic.replace("_operation_", operName))
+            file.write(Body_4)
+            if template == "1":
+                # One I/O
+                file.write(Header_kernel_2_input)
+                file.write(Tail_input_basic.replace("_operation_", operName))
+            else:
+                # Input & Output
+                file.write(Header_kernel_2_output)
+                file.write(Tail_output_basic.replace("_operation_", operName))
+
+        elif template == "3" or template == "4":
+            # User-defined operation
+            file.write(Header_kernel_0 + Body_0)
+            file.write(Oper_0_user.replace("_operation_", operName))
+            file.write(Body_1 + Body_2)
+            file.write(Body_3.replace("_initializer", "op_initializer"))
+            file.write(Oper_3_user.replace("_operation_", operName))
+            file.write(Body_4 + Header_kernel_1 + Body_0)
+            file.write(Oper_0_user.replace("_operation_", operName))
+            file.write(Body_1)
+            file.write(Body_3.replace("_initializer", "op_initializer"))
+            file.write(Oper_3_user.replace("_operation_", operName))
+            file.write(Body_4)
+            if template == "3":
+                # One I/O
+                file.write(Header_kernel_2_input)
+                file.write(Tail_input_user.replace("_operation_", operName))
+            else:
+                # Input & Output
+                file.write(Header_kernel_2_output)
+                file.write(Tail_output_user.replace("_operation_", operName))
+
         file.close()
 
     os.rename(filename, filename + ".cl")
